@@ -55,13 +55,15 @@ void page_home_unLoad(lv_obj_t *page)
 
 ## API
 
-**uint8_t lv_pm_init()**
+### uint8_t lv_pm_init()
+--------------------------
 
 这个函数必须在使用任何页面管理器 API 之前调用
 
 返回 0 表示 OK，其它值表示错误，你需要自己处理错误
 
-**lv_pm_page_t \*lv_pm_create_page(uint8_t id)**
+### lv_pm_page_t \*lv_pm_create_page(uint8_t id)
+--------------------------
 
 创建一个路由并且指定路由标识 ID，这个 ID 在打开页面时会用到，必须唯一。
 
@@ -76,7 +78,8 @@ void page_home_unLoad(lv_obj_t *page)
  1. onLoad
  2. unLoad
 
-**uint8_t lv_pm_open_page(uint8_t id, lv_pm_open_options_t \*behavior)**
+### uint8_t lv_pm_open_page(uint8_t id, lv_pm_open_options_t \*behavior)
+--------------------------
 
 根据指定的路由 ID 打开页面，此时会调用 onLoad 真正创建页面
 
@@ -97,7 +100,8 @@ lv_pm_open_page(0, &options);
 // 或者使用默认行为 lv_pm_open_page(0, NULL);
 ```
 
-**uint8_t lv_pm_back()**
+### uint8_t lv_pm_back()
+--------------------------
 
 关闭当前页面并且显示上一个页面。如果当前只有一个页面或者没有打开页面，则此函数什么也不做
 
