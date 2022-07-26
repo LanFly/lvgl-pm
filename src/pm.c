@@ -58,6 +58,8 @@ lv_pm_page_t *lv_pm_create_page(uint8_t id)
   if (pm_page == NULL) {
     return NULL;
   }
+  memset(pm_page, 0, sizeof(lv_pm_page_t));
+
   lv_pm_router[id] = pm_page;
   lv_obj_t *page = lv_obj_create(lv_scr_act());
   lv_obj_remove_style_all(page);
@@ -82,6 +84,10 @@ uint8_t lv_pm_open_page(uint8_t id, lv_pm_open_options_t *behavior)
   lv_pm_history[lv_pm_history_len] = id;
   lv_pm_page_t *pm_page = lv_pm_router[id];
   lv_obj_t *page = pm_page->page;
+  if (behavior) {
+    pm_page->_options = *behavior;
+  }
+  pm_page->_back = false;
 
   lv_obj_t *screen = lv_scr_act();
   // turn off the scroll bar temporarily when performing animation
@@ -91,10 +97,11 @@ uint8_t lv_pm_open_page(uint8_t id, lv_pm_open_options_t *behavior)
     uint8_t pid = lv_pm_history[lv_pm_history_len - 1];
     lv_pm_page_t *prev_pm_page = lv_pm_router[pid];
     lv_obj_t *prev_page = prev_pm_page->page;
+    prev_pm_page->_back = false;
     if (prev_pm_page->willDisappear) {
       prev_pm_page->willDisappear(prev_page);
     }
-    _pm_anima_disAppear(prev_pm_page, behavior, _disAppear_complete_cb);
+    _pm_anima_disAppear(prev_pm_page, &pm_page->_options, _disAppear_complete_cb);
   }
 
   pm_page->onLoad(page);
@@ -102,7 +109,7 @@ uint8_t lv_pm_open_page(uint8_t id, lv_pm_open_options_t *behavior)
   if (pm_page->willAppear) {
     pm_page->willAppear(page);
   }
-  _pm_anima_appear(pm_page, behavior, _appear_complete_cb);
+  _pm_anima_appear(pm_page, &pm_page->_options, _appear_complete_cb);
 
   lv_pm_history_len++;
   return 0;
@@ -115,29 +122,28 @@ uint8_t lv_pm_back()
   }
   uint8_t pid = lv_pm_history[lv_pm_history_len - 1];
   lv_pm_page_t *pm_page = lv_pm_router[pid];
+  pm_page->_back = true;
   lv_obj_t *page = pm_page->page;
   lv_obj_t *screen = lv_scr_act();
   // turn off the scroll bar temporarily when performing animation
   lv_obj_set_scrollbar_mode(screen, LV_SCROLLBAR_MODE_OFF);
-  lv_pm_open_options_t options = {
-    .animation = LV_PM_ANIMA_SLIDE
-  };
 
   if (pm_page->willDisappear) {
     pm_page->willDisappear(page);
   }
-  _pm_anima_disAppear(pm_page, &options, _back_disAppear_complete_cb);
+  _pm_anima_disAppear(pm_page, &pm_page->_options, _back_disAppear_complete_cb);
 
   lv_pm_history_len--;
   uint8_t prev_pid = lv_pm_history[lv_pm_history_len - 1];
   lv_pm_page_t *prev_pm_page = lv_pm_router[prev_pid];
   lv_obj_t *prev_page = prev_pm_page->page;
+  prev_pm_page->_back = true;
 
   if (prev_pm_page->willAppear) {
     prev_pm_page->willAppear(prev_page);
   }
   lv_obj_clear_flag(prev_pm_page->page, LV_OBJ_FLAG_HIDDEN);
-  _pm_anima_appear(prev_pm_page, &options, _back_appear_complete_cb);
+  _pm_anima_appear(prev_pm_page, &pm_page->_options, _back_appear_complete_cb);
 
   return 0;
 }

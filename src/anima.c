@@ -23,6 +23,12 @@ static void anima_ready_cb(lv_anim_t *anim)
   cb_data->cb(cb_data->pm_page);
 }
 
+/** 
+----------------------------------------------------------------------------------------------------------
+  slide animation
+----------------------------------------------------------------------------------------------------------
+*/
+
 static void _pm_slide_appear(lv_pm_page_t *pm_page, lv_pm_open_options_t *behavior, lv_pm_anima_complete_cb cb)
 {
   lv_coord_t width = lv_disp_get_hor_res(NULL);
@@ -38,12 +44,18 @@ static void _pm_slide_appear(lv_pm_page_t *pm_page, lv_pm_open_options_t *behavi
   lv_anim_init(&appear_anima);
   lv_anim_set_user_data(&appear_anima, (void *)cb_data);
   lv_anim_set_var(&appear_anima, pm_page->page);
-  lv_anim_set_values(&appear_anima, width, 0);
+
+  if (pm_page->_back) {
+    lv_anim_set_values(&appear_anima, -width, 0);
+  } else {
+    lv_anim_set_values(&appear_anima, width, 0);
+  }
+
+  lv_anim_set_path_cb(&appear_anima, lv_anim_path_ease_out);
   lv_anim_set_time(&appear_anima, 500);
   lv_anim_set_repeat_count(&appear_anima, 1);
   lv_anim_set_exec_cb(&appear_anima, translateX_anima_cb);
   lv_anim_set_ready_cb(&appear_anima, anima_ready_cb);
-  lv_anim_set_path_cb(&appear_anima, lv_anim_path_ease_out);
   lv_anim_start(&appear_anima);
 }
 
@@ -62,7 +74,13 @@ static void _pm_slide_disAppear(lv_pm_page_t *pm_page, lv_pm_open_options_t *beh
   lv_anim_init(&disAppear_anima);
   lv_anim_set_user_data(&disAppear_anima, (void *)cb_data);
   lv_anim_set_var(&disAppear_anima, pm_page->page);
-  lv_anim_set_values(&disAppear_anima, 0, -width);
+
+  if (pm_page->_back) {
+    lv_anim_set_values(&disAppear_anima, 0, width);
+  } else {
+    lv_anim_set_values(&disAppear_anima, 0, -width);
+  }
+
   lv_anim_set_time(&disAppear_anima, 500);
   lv_anim_set_repeat_count(&disAppear_anima, 1);
   lv_anim_set_exec_cb(&disAppear_anima, translateX_anima_cb);
@@ -70,6 +88,8 @@ static void _pm_slide_disAppear(lv_pm_page_t *pm_page, lv_pm_open_options_t *beh
   lv_anim_set_path_cb(&disAppear_anima, lv_anim_path_ease_out);
   lv_anim_start(&disAppear_anima);
 }
+
+/** --------------------------------------------------------------------------------------------------- */
 
 void _pm_anima_appear(lv_pm_page_t *pm_page, lv_pm_open_options_t *behavior, lv_pm_anima_complete_cb cb)
 {

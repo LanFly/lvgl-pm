@@ -6,7 +6,7 @@
 
 #define LV_PM_MAJOR 0
 #define LV_PM_MINOR 1
-#define LV_PM_PATCH 0
+#define LV_PM_PATCH 1
 
 typedef void (*lv_pm_lifecycle)(lv_obj_t *page);
 
@@ -32,6 +32,13 @@ enum LV_PM_OPEN_TARGET {
   LV_PM_TARGET_RESET = 2
 };
 
+typedef struct _lv_pm_open_options_t
+{
+  enum LV_PM_PAGE_ANIMA animation;
+  enum LV_PM_OPEN_TARGET target;
+  enum LV_PM_ANIMA_DIR direction;
+} lv_pm_open_options_t;
+
 typedef struct _lv_pm_page_t
 {
   lv_obj_t *page;
@@ -41,14 +48,10 @@ typedef struct _lv_pm_page_t
   lv_pm_lifecycle willDisappear;
   lv_pm_lifecycle didDisappear;
   lv_pm_lifecycle unLoad;
+  lv_pm_open_options_t _options;
+  bool _back;
 } lv_pm_page_t;
 
-typedef struct _lv_pm_open_options_t
-{
-  enum LV_PM_PAGE_ANIMA animation;
-  enum LV_PM_OPEN_TARGET target;
-  enum LV_PM_ANIMA_DIR direction;
-} lv_pm_open_options_t;
 
 uint8_t lv_pm_history_len;
 
