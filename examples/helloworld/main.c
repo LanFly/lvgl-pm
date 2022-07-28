@@ -3,7 +3,7 @@
 #include "page/page1/page1.h"
 #include "page/page2/page2.h"
 
-void main()
+void app_start()
 {
   lv_pm_init();
 

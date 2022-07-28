@@ -1,0 +1,3 @@
+[submodule "lvgl-simulator-x"]
+	path = lvgl-simulator-x
+	url = git@github.com:LanFly/lvgl-simulator-x.git

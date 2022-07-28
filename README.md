@@ -53,6 +53,18 @@ void page_home_unLoad(lv_obj_t *page)
 }
 ```
 
+## 可运行的例程
+
+在 examples 下自带了可运行的例程，你可以通过下面的命令编译并运行：
+
+1. 确保 Git Submodule 都下载下来了，注意有2个，你需要在`根目录`和`lvgl-simulator-x`都执行一遍 `git submodule update --init`
+2. 创建 `build` 文件夹并进入
+3. 执行 `cmake ../examples`
+4. 执行 `make`
+5. 运行 `./lvgl-pm-demo`
+
+默认运行的是 helloworld，你可以在 `examples/CMakeLists.txt` 文件开头设置不同的目录名来运行不同的例程
+
 ## API
 
 ### uint8_t lv_pm_init()
