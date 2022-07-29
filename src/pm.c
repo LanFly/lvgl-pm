@@ -1,5 +1,6 @@
 #include "pm.h"
 #include "anima.h"
+#include "pm_utils.h"
 
 #include <stdlib.h>
 
@@ -62,7 +63,8 @@ lv_pm_page_t *lv_pm_create_page(uint8_t id)
 
   lv_pm_router[id] = pm_page;
   lv_obj_t *page = lv_obj_create(lv_scr_act());
-  lv_obj_remove_style_all(page);
+  // reset style. border radius etc...
+  pm_reset_style(page);
   lv_obj_add_flag(page, LV_OBJ_FLAG_HIDDEN);
   lv_coord_t width = lv_disp_get_hor_res(NULL);
   lv_coord_t height = lv_disp_get_ver_res(NULL);
