@@ -21,6 +21,7 @@ static void anima_ready_cb(lv_anim_t *anim)
 {
   lv_pm_anima_data *cb_data = (lv_pm_anima_data *)anim->user_data;
   cb_data->cb(cb_data->pm_page);
+  free(anim->user_data);
 }
 
 /** 
