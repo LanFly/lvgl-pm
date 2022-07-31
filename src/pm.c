@@ -3,36 +3,33 @@
 #include "pm_utils.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
-static void _appear_complete_cb(lv_pm_page_t *pm_page)
+static void _appear_complete_cb(lv_pm_page_t *pm_page, lv_pm_open_options_t options)
 {
   if (pm_page->didAppear) {
     pm_page->didAppear(pm_page->page);
   }
-
-  lv_obj_t *screen = lv_scr_act();
-  lv_obj_set_scrollbar_mode(screen, LV_SCROLLBAR_MODE_AUTO);
 }
 
-static void _back_appear_complete_cb(lv_pm_page_t *pm_page)
+static void _back_appear_complete_cb(lv_pm_page_t *pm_page, lv_pm_open_options_t options)
 {
   if (pm_page->didAppear) {
     pm_page->didAppear(pm_page->page);
   }
-
-  lv_obj_t *screen = lv_scr_act();
-  lv_obj_set_scrollbar_mode(screen, LV_SCROLLBAR_MODE_AUTO);
 }
 
-static void _disAppear_complete_cb(lv_pm_page_t *pm_page)
+static void _disAppear_complete_cb(lv_pm_page_t *pm_page, lv_pm_open_options_t options)
 {
-  lv_obj_add_flag(pm_page->page, LV_OBJ_FLAG_HIDDEN);
+  if (options.animation != LV_PM_ANIMA_POPUP) {
+    lv_obj_add_flag(pm_page->page, LV_OBJ_FLAG_HIDDEN);
+  }
   if (pm_page->didDisappear) {
     pm_page->didDisappear(pm_page->page);
   }
 }
 
-static void _back_disAppear_complete_cb(lv_pm_page_t *pm_page)
+static void _back_disAppear_complete_cb(lv_pm_page_t *pm_page, lv_pm_open_options_t options)
 {
   lv_obj_add_flag(pm_page->page, LV_OBJ_FLAG_HIDDEN);
   if (pm_page->didDisappear) {
@@ -49,6 +46,10 @@ uint8_t lv_pm_init()
   {
     lv_pm_router[i] = 0;
   }
+
+  lv_obj_t *screen = lv_scr_act();
+  // turn off the scroll bar
+  lv_obj_set_scrollbar_mode(screen, LV_SCROLLBAR_MODE_OFF);
 
   return 0;
 }
@@ -91,10 +92,6 @@ uint8_t lv_pm_open_page(uint8_t id, lv_pm_open_options_t *behavior)
   }
   pm_page->_back = false;
 
-  lv_obj_t *screen = lv_scr_act();
-  // turn off the scroll bar temporarily when performing animation
-  lv_obj_set_scrollbar_mode(screen, LV_SCROLLBAR_MODE_OFF);
-
   if (lv_pm_history_len > 0) {
     uint8_t pid = lv_pm_history[lv_pm_history_len - 1];
     lv_pm_page_t *prev_pm_page = lv_pm_router[pid];
@@ -126,9 +123,6 @@ uint8_t lv_pm_back()
   lv_pm_page_t *pm_page = lv_pm_router[pid];
   pm_page->_back = true;
   lv_obj_t *page = pm_page->page;
-  lv_obj_t *screen = lv_scr_act();
-  // turn off the scroll bar temporarily when performing animation
-  lv_obj_set_scrollbar_mode(screen, LV_SCROLLBAR_MODE_OFF);
 
   if (pm_page->willDisappear) {
     pm_page->willDisappear(page);

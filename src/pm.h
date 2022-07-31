@@ -13,7 +13,8 @@ typedef void (*lv_pm_lifecycle)(lv_obj_t *page);
 enum LV_PM_PAGE_ANIMA {
   LV_PM_ANIMA_NONE = 0,
   LV_PM_ANIMA_SLIDE = 1,
-  LV_PM_ANIMA_SLIDE_SCALE = 2
+  LV_PM_ANIMA_SLIDE_SCALE = 2,
+  LV_PM_ANIMA_POPUP = 3
 };
 
 enum LV_PM_ANIMA_DIR {
