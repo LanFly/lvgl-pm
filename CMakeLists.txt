@@ -1,9 +1,17 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(pm)
+if(NOT ESP_PLATFORM)
+  project(pm)
+endif()
 
-include_directories(src)
+file(GLOB_RECURSE SOURCES src/*.c)
 
-aux_source_directory(src SRCS)
+if(ESP_PLATFORM)
+  idf_component_register(SRCS ${SOURCES}
+                         INCLUDE_DIRS src
+                         REQUIRES lvgl)
+else()
+  include_directories(src)
 
-add_library(pm STATIC ${SRCS})
+  add_library(pm STATIC ${SOURCES})
+endif()
