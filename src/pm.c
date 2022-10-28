@@ -27,6 +27,10 @@ static void _disAppear_complete_cb(lv_pm_page_t *pm_page, lv_pm_open_options_t o
   if (pm_page->didDisappear) {
     pm_page->didDisappear(pm_page->page);
   }
+  if (options.target == LV_PM_TARGET_SELF) {
+    pm_page->unLoad(pm_page->page);
+    lv_obj_clean(pm_page->page);
+  }
 }
 
 static void _back_disAppear_complete_cb(lv_pm_page_t *pm_page, lv_pm_open_options_t options)
@@ -110,7 +114,16 @@ uint8_t lv_pm_open_page(uint8_t id, lv_pm_open_options_t *behavior)
   }
   _pm_anima_appear(pm_page, &pm_page->_options, _appear_complete_cb);
 
-  lv_pm_history_len++;
+  if (behavior && behavior->target == LV_PM_TARGET_SELF) {
+    if (lv_pm_history_len == 0) {
+      lv_pm_history_len++;
+    } else {
+      lv_pm_history[lv_pm_history_len - 1] = lv_pm_history[lv_pm_history_len];
+    }
+  } else {
+    lv_pm_history_len++;
+  }
+
   return 0;
 }
 
